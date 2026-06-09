@@ -33,6 +33,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -52,6 +60,7 @@ import {
 } from '@/service/admin/reviews';
 
 const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 20, 50] as const;
 
 const renderStars = (rating: number) => {
   const rounded = Math.max(1, Math.min(5, Math.round(rating)));
@@ -123,6 +132,7 @@ export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
   const [keywordInput, setKeywordInput] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -136,14 +146,14 @@ export default function AdminReviewsPage() {
   const [editRating, setEditRating] = useState('5');
   const [editComment, setEditComment] = useState('');
 
-  const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
   const fetchReviews = useCallback(async () => {
     setLoading(true);
     try {
       const data = await adminGetProductReviews({
-        offset: (page - 1) * PAGE_SIZE,
-        limit: PAGE_SIZE,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
         keyword: keyword || undefined,
         field: keyword ? 'comment' : undefined,
         sortBy: 'created_at',
@@ -156,17 +166,17 @@ export default function AdminReviewsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, keyword]);
+  }, [page, pageSize, keyword]);
 
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
 
   const pageSummary = useMemo(() => {
-    const start = Math.min((page - 1) * PAGE_SIZE + 1, totalRows);
-    const end = Math.min(page * PAGE_SIZE, totalRows);
+    const start = Math.min((page - 1) * pageSize + 1, totalRows);
+    const end = Math.min(page * pageSize, totalRows);
     return totalRows > 0 ? `${start}-${end} / ${totalRows}` : '0';
-  }, [page, totalRows]);
+  }, [page, pageSize, totalRows]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -246,9 +256,35 @@ export default function AdminReviewsPage() {
 
       <div className="flex-1 space-y-4 p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-sm text-gray-500">
-            Trang {page} / {totalPages}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm text-gray-500">
+              Trang {page} / {totalPages}
+            </h2>
+            <div className="flex items-center gap-2 ml-2">
+              <Label htmlFor="page-size" className="text-sm whitespace-nowrap">
+                Hiển thị:
+              </Label>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(v) => {
+                  setPageSize(parseInt(v, 10) as typeof pageSize);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger id="page-size" className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={size.toString()}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-500">mục/trang</span>
+            </div>
+          </div>
           <form onSubmit={handleSearch} className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input

@@ -1,45 +1,34 @@
-"use client";
+'use client';
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Search, X } from "lucide-react";
-import { GetProductsParams } from "@/service/admin/products";
-import { useCallback, useState, useEffect } from "react";
-import useDebounce from "@/hooks/useDebounce";
-import { getCategories, type Category } from "@/service/admin/categories";
+} from '@/components/ui/select';
+import { Search, X } from 'lucide-react';
+import { GetProductsParams } from '@/service/admin/products';
+import { useCallback, useState, useEffect } from 'react';
+import useDebounce from '@/hooks/useDebounce';
+import { getCategories, type Category } from '@/service/admin/categories';
 
-export type Filters = Pick<
-  GetProductsParams,
-  "keyword" | "status" | "category" | "sortBy" | "sortType"
->;
+export type Filters = Pick<GetProductsParams, 'q' | 'status' | 'category' | 'sortBy' | 'sortType'>;
 
 interface ProductFiltersProps {
   onChange: (filters: Filters) => void;
 }
 
-const CATEGORIES = [
-  "Pullovers",
-  "Shirts",
-  "Pants",
-  "T-Shirts",
-  "Shoes",
-  "Accessories",
-  "Jackets",
-];
+const CATEGORIES = ['Pullovers', 'Shirts', 'Pants', 'T-Shirts', 'Shoes', 'Accessories', 'Jackets'];
 
 export function ProductFilters({ onChange }: ProductFiltersProps) {
-  const [keyword, setKeyword] = useState("");
-  const [status, setStatus] = useState("all");
-  const [category, setCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortType, setSortType] = useState<"asc" | "desc">("desc");
+  const [keyword, setKeyword] = useState('');
+  const [status, setStatus] = useState('all');
+  const [category, setCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortType, setSortType] = useState<'asc' | 'desc'>('desc');
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -53,9 +42,9 @@ export function ProductFilters({ onChange }: ProductFiltersProps) {
   const emitChange = useCallback(
     (overrides: Partial<Filters> = {}) => {
       onChange({
-        keyword: debouncedKeyword || undefined,
-        status: status === "all" ? undefined : status,
-        category: category === "all" ? undefined : category,
+        q: debouncedKeyword || undefined,
+        status: status === 'all' ? undefined : status,
+        category: category === 'all' ? undefined : category,
         sortBy: sortBy || undefined,
         sortType: sortType,
         ...overrides,
@@ -70,19 +59,19 @@ export function ProductFilters({ onChange }: ProductFiltersProps) {
   }, [emitChange]);
 
   const handleReset = () => {
-    setKeyword("");
-    setStatus("all");
-    setCategory("all");
-    setSortBy("createdAt");
-    setSortType("desc");
+    setKeyword('');
+    setStatus('all');
+    setCategory('all');
+    setSortBy('createdAt');
+    setSortType('desc');
   };
 
   const isDirty =
-    keyword !== "" ||
-    status !== "all" ||
-    category !== "all" ||
-    sortBy !== "createdAt" ||
-    sortType !== "desc";
+    keyword !== '' ||
+    status !== 'all' ||
+    category !== 'all' ||
+    sortBy !== 'createdAt' ||
+    sortType !== 'desc';
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-md border bg-gray-50 p-3">
@@ -129,9 +118,9 @@ export function ProductFilters({ onChange }: ProductFiltersProps) {
       <Select
         value={`${sortBy}-${sortType}`}
         onValueChange={(v) => {
-          const [field, type] = v.split("-");
+          const [field, type] = v.split('-');
           setSortBy(field);
-          setSortType(type as "asc" | "desc");
+          setSortType(type as 'asc' | 'desc');
         }}
       >
         <SelectTrigger className="w-44 bg-white">

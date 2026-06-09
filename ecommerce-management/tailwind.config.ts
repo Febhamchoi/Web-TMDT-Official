@@ -20,6 +20,7 @@ const config = {
     },
     extend: {
       fontFamily: {
+        montserrat: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
         inter: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       colors: {

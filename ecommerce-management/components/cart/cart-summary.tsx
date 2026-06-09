@@ -11,7 +11,7 @@ export function CartSummary() {
   const selectedCount = getSelectedCount();
   const subtotal = getSelectedTotal();
   const tax = subtotal * 0.1; // 10% tax
-  const shipping = subtotal > 0 ? 15 : 0; // $15 shipping fee if cart is not empty
+  const shipping = subtotal > 0 ? 15000 : 0; // 15,000đ shipping fee if cart is not empty
   const total = subtotal + tax + shipping;
 
   return (

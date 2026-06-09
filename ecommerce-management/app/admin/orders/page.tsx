@@ -41,6 +41,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Search, Eye, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -55,6 +56,7 @@ import {
 } from '@/service/admin/orders';
 
 const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 20, 50] as const;
 
 const ORDER_STATUS_MAP: Record<
   OrderStatus,
@@ -102,6 +104,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -114,14 +117,14 @@ export default function AdminOrdersPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       const result = await adminGetAllOrders({
-        offset: (page - 1) * PAGE_SIZE,
-        limit: PAGE_SIZE,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
         keyword: keyword || undefined,
         status: statusFilter !== 'all' ? statusFilter : undefined,
         payment_status: paymentFilter !== 'all' ? paymentFilter : undefined,
@@ -135,7 +138,7 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, keyword, statusFilter, paymentFilter]);
+  }, [page, pageSize, keyword, statusFilter, paymentFilter]);
 
   useEffect(() => {
     fetchOrders();
@@ -250,6 +253,31 @@ export default function AdminOrdersPage() {
               <SelectItem value="refunded">Hoàn tiền</SelectItem>
             </SelectContent>
           </Select>
+
+          <div className="flex items-center gap-2 ml-auto">
+            <Label htmlFor="page-size" className="text-sm whitespace-nowrap">
+              Hiển thị:
+            </Label>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={(v) => {
+                setPageSize(parseInt(v, 10) as typeof pageSize);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger id="page-size" className="w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={size.toString()}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-gray-500">mục/trang</span>
+          </div>
         </div>
 
         {/* Table */}
@@ -301,7 +329,7 @@ export default function AdminOrdersPage() {
                   return (
                     <TableRow key={order._id} className="hover:bg-gray-50">
                       <TableCell className="text-gray-400 text-xs">
-                        {(page - 1) * PAGE_SIZE + idx + 1}
+                        {(page - 1) * pageSize + idx + 1}
                       </TableCell>
                       <TableCell>
                         <div className="font-medium text-gray-800 truncate max-w-[140px]">

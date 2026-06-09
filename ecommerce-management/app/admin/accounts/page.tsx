@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { AdminHeader } from "@/components/admin/header";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect, useCallback } from 'react';
+import { AdminHeader } from '@/components/admin/header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -13,21 +13,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +37,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Pagination,
   PaginationContent,
@@ -46,11 +46,11 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { Search, Eye, Trash2, Pencil } from "lucide-react";
-import Image from "next/image";
+} from '@/components/ui/pagination';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { Search, Eye, Trash2, Pencil } from 'lucide-react';
+import Image from 'next/image';
 import {
   adminGetAllAccounts,
   adminUpdateAccount,
@@ -58,38 +58,39 @@ import {
   type Account,
   type AccountRole,
   type AccountStatus,
-} from "@/service/admin/accounts";
+} from '@/service/admin/accounts';
 
 const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 20, 50] as const;
 
 const ROLE_MAP: Record<
   AccountRole,
-  { label: string; variant: "default" | "secondary" | "outline" }
+  { label: string; variant: 'default' | 'secondary' | 'outline' }
 > = {
-  admin: { label: "Admin", variant: "default" },
-  staff: { label: "Nhân viên", variant: "secondary" },
-  customer: { label: "Khách hàng", variant: "outline" },
+  admin: { label: 'Admin', variant: 'default' },
+  staff: { label: 'Nhân viên', variant: 'secondary' },
+  customer: { label: 'Khách hàng', variant: 'outline' },
 };
 
 const STATUS_MAP: Record<
   AccountStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" }
+  { label: string; variant: 'default' | 'secondary' | 'destructive' }
 > = {
-  active: { label: "Hoạt động", variant: "default" },
-  inactive: { label: "Không hoạt động", variant: "secondary" },
-  suspended: { label: "Bị khoá", variant: "destructive" },
+  active: { label: 'Hoạt động', variant: 'default' },
+  inactive: { label: 'Không hoạt động', variant: 'secondary' },
+  suspended: { label: 'Bị khoá', variant: 'destructive' },
 };
 
-const FALLBACK_AVATAR =
-  "https://ui-avatars.com/api/?background=6366f1&color=fff&size=40&name=";
+const FALLBACK_AVATAR = 'https://ui-avatars.com/api/?background=6366f1&color=fff&size=40&name=';
 
 export default function AdminAccountsPage() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
-  const [keyword, setKeyword] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [keyword, setKeyword] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const [editAccount, setEditAccount] = useState<Account | null>(null);
   const [editForm, setEditForm] = useState<{
@@ -102,27 +103,27 @@ export default function AdminAccountsPage() {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
   const fetchAccounts = useCallback(async () => {
     setLoading(true);
     try {
       const result = await adminGetAllAccounts({
-        offset: (page - 1) * PAGE_SIZE,
-        limit: PAGE_SIZE,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
         keyword: keyword || undefined,
-        status: statusFilter !== "all" ? statusFilter : undefined,
-        sortBy: "createdAt",
-        sortType: "desc",
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        sortBy: 'createdAt',
+        sortType: 'desc',
       });
       setAccounts(result.hits ?? []);
       setTotalRows(result.pagination?.totalRows ?? 0);
     } catch {
-      toast.error("Không thể tải danh sách tài khoản");
+      toast.error('Không thể tải danh sách tài khoản');
     } finally {
       setLoading(false);
     }
-  }, [page, keyword, statusFilter]);
+  }, [page, keyword, statusFilter, pageSize]);
 
   useEffect(() => {
     fetchAccounts();
@@ -138,7 +139,7 @@ export default function AdminAccountsPage() {
     setEditAccount(acc);
     setEditForm({
       fullName: acc.fullName,
-      phone: acc.phone ?? "",
+      phone: acc.phone ?? '',
       role_id: acc.role_id,
       status: acc.status,
     });
@@ -149,13 +150,13 @@ export default function AdminAccountsPage() {
     setEditSaving(true);
     try {
       const updated = await adminUpdateAccount(editAccount._id, editForm);
-      toast.success("Cập nhật thành công");
+      toast.success('Cập nhật thành công');
       setAccounts((prev) =>
         prev.map((a) => (a._id === editAccount._id ? { ...a, ...updated } : a)),
       );
       setEditAccount(null);
     } catch {
-      toast.error("Cập nhật thất bại");
+      toast.error('Cập nhật thất bại');
     } finally {
       setEditSaving(false);
     }
@@ -165,11 +166,11 @@ export default function AdminAccountsPage() {
     if (!deleteId) return;
     try {
       await adminDeleteAccount(deleteId);
-      toast.success("Đã xoá tài khoản");
+      toast.success('Đã xoá tài khoản');
       setAccounts((prev) => prev.filter((a) => a._id !== deleteId));
       setTotalRows((prev) => Math.max(0, prev - 1));
     } catch {
-      toast.error("Xoá thất bại");
+      toast.error('Xoá thất bại');
     } finally {
       setDeleteId(null);
     }
@@ -177,18 +178,45 @@ export default function AdminAccountsPage() {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader
-        title="Quản lý tài khoản"
-        description={`${totalRows} tài khoản`}
-      />
+      <AdminHeader title="Quản lý tài khoản" description={`${totalRows} tài khoản`} />
 
       <div className="flex-1 space-y-4 p-6">
+        {/* Top bar */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-sm text-gray-500">
+              Trang {page} / {totalPages}
+            </h2>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="page-size" className="text-sm whitespace-nowrap">
+                Hiển thị:
+              </Label>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(v) => {
+                  setPageSize(parseInt(v) as typeof pageSize);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger id="page-size" className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={size.toString()}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-500">mục/trang</span>
+            </div>
+          </div>
+        </div>
+
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-3">
-          <form
-            onSubmit={handleSearch}
-            className="relative flex-1 min-w-[220px] max-w-sm"
-          >
+          <form onSubmit={handleSearch} className="relative flex-1 min-w-[220px] max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Tìm theo tên, email..."
@@ -244,10 +272,7 @@ export default function AdminAccountsPage() {
                 ))
               ) : accounts.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center py-12 text-gray-400"
-                  >
+                  <TableCell colSpan={7} className="text-center py-12 text-gray-400">
                     Không có tài khoản nào
                   </TableCell>
                 </TableRow>
@@ -255,15 +280,14 @@ export default function AdminAccountsPage() {
                 accounts.map((acc, idx) => {
                   const roleInfo = ROLE_MAP[acc.role_id] ?? {
                     label: acc.role_id,
-                    variant: "secondary",
+                    variant: 'secondary',
                   };
                   const statusInfo = STATUS_MAP[acc.status] ?? {
                     label: acc.status,
-                    variant: "secondary",
+                    variant: 'secondary',
                   };
                   const avatarSrc =
-                    acc.avatar ||
-                    `${FALLBACK_AVATAR}${encodeURIComponent(acc.fullName)}`;
+                    acc.avatar || `${FALLBACK_AVATAR}${encodeURIComponent(acc.fullName)}`;
                   return (
                     <TableRow key={acc._id} className="hover:bg-gray-50">
                       <TableCell className="text-gray-400 text-xs">
@@ -284,30 +308,20 @@ export default function AdminAccountsPage() {
                             />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-gray-800 truncate">
-                              {acc.fullName}
-                            </p>
-                            <p className="text-xs text-gray-400 truncate">
-                              {acc.email}
-                            </p>
+                            <p className="font-medium text-gray-800 truncate">{acc.fullName}</p>
+                            <p className="text-xs text-gray-400 truncate">{acc.email}</p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {acc.phone || "—"}
+                      <TableCell className="text-sm text-gray-600">{acc.phone || '—'}</TableCell>
+                      <TableCell>
+                        <Badge variant={roleInfo.variant}>{roleInfo.label}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={roleInfo.variant}>
-                          {roleInfo.label}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={statusInfo.variant}>
-                          {statusInfo.label}
-                        </Badge>
+                        <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
                       </TableCell>
                       <TableCell className="text-xs text-gray-400">
-                        {new Date(acc.createdAt).toLocaleDateString("vi-VN")}
+                        {new Date(acc.createdAt).toLocaleDateString('vi-VN')}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
@@ -345,11 +359,7 @@ export default function AdminAccountsPage() {
                 <PaginationPrevious
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   aria-disabled={page === 1}
-                  className={
-                    page === 1
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
+                  className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                 />
               </PaginationItem>
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
@@ -376,9 +386,7 @@ export default function AdminAccountsPage() {
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   aria-disabled={page === totalPages}
                   className={
-                    page === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
+                    page === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
                   }
                 />
               </PaginationItem>
@@ -388,10 +396,7 @@ export default function AdminAccountsPage() {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog
-        open={!!editAccount}
-        onOpenChange={(v) => !v && setEditAccount(null)}
-      >
+      <Dialog open={!!editAccount} onOpenChange={(v) => !v && setEditAccount(null)}>
         <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
             <DialogTitle>Chỉnh sửa tài khoản</DialogTitle>
@@ -402,18 +407,14 @@ export default function AdminAccountsPage() {
                 <Label>Họ và tên</Label>
                 <Input
                   value={editForm.fullName}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, fullName: e.target.value })
-                  }
+                  onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
                 />
               </div>
               <div className="space-y-1.5">
                 <Label>Số điện thoại</Label>
                 <Input
                   value={editForm.phone}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, phone: e.target.value })
-                  }
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                   placeholder="Nhập SĐT"
                 />
               </div>
@@ -421,9 +422,7 @@ export default function AdminAccountsPage() {
                 <Label>Vai trò</Label>
                 <Select
                   value={editForm.role_id}
-                  onValueChange={(v) =>
-                    setEditForm({ ...editForm, role_id: v as AccountRole })
-                  }
+                  onValueChange={(v) => setEditForm({ ...editForm, role_id: v as AccountRole })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -439,9 +438,7 @@ export default function AdminAccountsPage() {
                 <Label>Trạng thái</Label>
                 <Select
                   value={editForm.status}
-                  onValueChange={(v) =>
-                    setEditForm({ ...editForm, status: v as AccountStatus })
-                  }
+                  onValueChange={(v) => setEditForm({ ...editForm, status: v as AccountStatus })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -464,31 +461,24 @@ export default function AdminAccountsPage() {
               disabled={editSaving}
               onClick={handleSaveEdit}
             >
-              {editSaving ? "Đang lưu..." : "Lưu"}
+              {editSaving ? 'Đang lưu...' : 'Lưu'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirm */}
-      <AlertDialog
-        open={!!deleteId}
-        onOpenChange={(v) => !v && setDeleteId(null)}
-      >
+      <AlertDialog open={!!deleteId} onOpenChange={(v) => !v && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Xoá tài khoản?</AlertDialogTitle>
             <AlertDialogDescription>
-              Hành động này không thể hoàn tác. Tài khoản sẽ bị xoá khỏi hệ
-              thống.
+              Hành động này không thể hoàn tác. Tài khoản sẽ bị xoá khỏi hệ thống.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Huỷ</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700"
-              onClick={handleDelete}
-            >
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={handleDelete}>
               Xoá
             </AlertDialogAction>
           </AlertDialogFooter>

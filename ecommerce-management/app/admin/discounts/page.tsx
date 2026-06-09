@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus, Edit2, Trash2, Search, Copy, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import {
   adminGetDiscounts,
@@ -30,11 +31,15 @@ import {
 } from '@/service/admin/discounts';
 
 export default function AdminDiscountsPage() {
+  const PAGE_SIZE = 10;
+  const PAGE_SIZE_OPTIONS = [5, 10, 20, 50] as const;
+
   const [discounts, setDiscounts] = useState<Discount[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [totalRows, setTotalRows] = useState(0);
 
   const [isCreating, setIsCreating] = useState(false);
@@ -54,14 +59,12 @@ export default function AdminDiscountsPage() {
     isActive: true,
   });
 
-  const PAGE_SIZE = 10;
-
   const fetchDiscounts = async () => {
     setLoading(true);
     try {
       const result = await adminGetDiscounts({
-        limit: PAGE_SIZE,
-        offset: (page - 1) * PAGE_SIZE,
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
         keyword: searchKeyword || undefined,
         status: filterStatus !== 'all' ? filterStatus : undefined,
       });
@@ -77,7 +80,7 @@ export default function AdminDiscountsPage() {
 
   useEffect(() => {
     fetchDiscounts();
-  }, [page, searchKeyword, filterStatus]);
+  }, [page, pageSize, searchKeyword, filterStatus]);
 
   const handleSave = async () => {
     try {
@@ -208,7 +211,7 @@ export default function AdminDiscountsPage() {
     );
   };
 
-  const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
   return (
     <div className="space-y-6 p-6">
@@ -216,6 +219,30 @@ export default function AdminDiscountsPage() {
         <div>
           <h1 className="text-3xl font-bold">Quản lý khuyến mãi</h1>
           <p className="text-sm text-gray-600 mt-1">Tạo và quản lý các mã giảm giá</p>
+          <div className="mt-3 flex items-center gap-2">
+            <Label htmlFor="page-size" className="text-sm whitespace-nowrap">
+              Hiển thị:
+            </Label>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={(v) => {
+                setPageSize(parseInt(v, 10) as typeof pageSize);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger id="page-size" className="w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <SelectItem key={size} value={size.toString()}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-gray-500">mục/trang</span>
+          </div>
         </div>
         <Dialog open={isCreating} onOpenChange={setIsCreating}>
           <DialogTrigger asChild>

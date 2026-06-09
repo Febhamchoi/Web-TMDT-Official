@@ -7,6 +7,7 @@ import { subscribeNewsletter } from '@/service/newsletter';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { Logo } from '@/components/logo';
 
 export function Footer() {
   const [email, setEmail] = useState('');
@@ -39,10 +40,7 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand & Newsletter */}
           <div className="space-y-4 lg:col-span-2">
-            <div>
-              <h3 className="text-xl font-bold mb-2 text-white">TrendVibe</h3>
-              <p className="text-xs text-gray-400 uppercase tracking-widest mb-4">THEME</p>
-            </div>
+            <Logo size="md" showSubtitle={false} href="/" />
             <p className="text-sm text-gray-300">
               Khám phá xu hướng thời trang mới nhất. Đăng ký nhận bản tin để nhận ưu đãi độc quyền
               và cập nhật mới.

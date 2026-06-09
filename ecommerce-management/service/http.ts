@@ -4,9 +4,10 @@ import Cookies from 'js-cookie';
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'https://ecommerce-management-be.vercel.app';
 const API_BASE_URL_LOCAL = 'http://localhost:3000';
+const API_BASE_URL_PROD = 'https://pliable-gander-mothball.ngrok-free.dev';
 // Tạo instance Axios với cấu hình mặc định
 const http: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL_LOCAL,
   timeout: 10000,
   withCredentials: true,
   headers: {

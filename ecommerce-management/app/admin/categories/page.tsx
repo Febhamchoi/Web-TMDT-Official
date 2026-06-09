@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { AdminHeader } from "@/components/admin/header";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect, useCallback } from 'react';
+import { AdminHeader } from '@/components/admin/header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,14 +24,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -39,17 +39,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Pencil, Trash2, Tags } from "lucide-react";
-import { toast } from "sonner";
+} from '@/components/ui/pagination';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Plus, Pencil, Trash2, Tags } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   getCategories,
   createCategory,
@@ -57,14 +57,15 @@ import {
   deleteCategory,
   type Category,
   type CreateCategoryPayload,
-} from "@/service/admin/categories";
+} from '@/service/admin/categories';
 
 const PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [5, 10, 20, 50] as const;
 
 const emptyForm: CreateCategoryPayload = {
-  title: "",
-  description: "",
-  status: "active",
+  title: '',
+  description: '',
+  status: 'active',
   position: 1,
 };
 
@@ -72,12 +73,12 @@ export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
 
   // Create dialog
   const [createOpen, setCreateOpen] = useState(false);
-  const [createForm, setCreateForm] =
-    useState<CreateCategoryPayload>(emptyForm);
+  const [createForm, setCreateForm] = useState<CreateCategoryPayload>(emptyForm);
   const [createLoading, setCreateLoading] = useState(false);
 
   // Edit dialog
@@ -91,23 +92,23 @@ export default function AdminCategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
   const fetchCategories = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getCategories({
-        offset: (page - 1) * PAGE_SIZE,
-        limit: PAGE_SIZE,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
       });
       setCategories(result?.hits ?? []);
       setTotalRows(result?.pagination?.totalRows ?? 0);
     } catch {
-      toast.error("Không thể tải danh sách danh mục");
+      toast.error('Không thể tải danh sách danh mục');
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, pageSize]);
 
   useEffect(() => {
     fetchCategories();
@@ -116,7 +117,7 @@ export default function AdminCategoriesPage() {
   // ── Create ────────────────────────────────────────────────────────────────
   const handleCreate = async () => {
     if (!createForm.title.trim()) {
-      toast.error("Vui lòng nhập tên danh mục");
+      toast.error('Vui lòng nhập tên danh mục');
       return;
     }
     setCreateLoading(true);
@@ -126,9 +127,9 @@ export default function AdminCategoriesPage() {
       setTotalRows((prev) => prev + 1);
       setCreateOpen(false);
       setCreateForm(emptyForm);
-      toast.success("Tạo danh mục thành công");
+      toast.success('Tạo danh mục thành công');
     } catch {
-      toast.error("Tạo danh mục thất bại");
+      toast.error('Tạo danh mục thất bại');
     } finally {
       setCreateLoading(false);
     }
@@ -139,7 +140,7 @@ export default function AdminCategoriesPage() {
     setEditTarget(cat);
     setEditForm({
       title: cat.title,
-      description: cat.description ?? "",
+      description: cat.description ?? '',
       status: cat.status,
       position: cat.position,
     });
@@ -149,19 +150,17 @@ export default function AdminCategoriesPage() {
   const handleEdit = async () => {
     if (!editTarget) return;
     if (!editForm.title.trim()) {
-      toast.error("Vui lòng nhập tên danh mục");
+      toast.error('Vui lòng nhập tên danh mục');
       return;
     }
     setEditLoading(true);
     try {
       const updated = await updateCategory(editTarget._id, editForm);
-      setCategories((prev) =>
-        prev.map((c) => (c._id === updated._id ? updated : c)),
-      );
+      setCategories((prev) => prev.map((c) => (c._id === updated._id ? updated : c)));
       setEditOpen(false);
-      toast.success("Cập nhật danh mục thành công");
+      toast.success('Cập nhật danh mục thành công');
     } catch {
-      toast.error("Cập nhật danh mục thất bại");
+      toast.error('Cập nhật danh mục thất bại');
     } finally {
       setEditLoading(false);
     }
@@ -181,9 +180,9 @@ export default function AdminCategoriesPage() {
       setCategories((prev) => prev.filter((c) => c._id !== deleteTarget._id));
       setTotalRows((prev) => Math.max(0, prev - 1));
       setDeleteOpen(false);
-      toast.success("Xóa danh mục thành công");
+      toast.success('Xóa danh mục thành công');
     } catch {
-      toast.error("Xóa danh mục thất bại");
+      toast.error('Xóa danh mục thất bại');
     } finally {
       setDeleteLoading(false);
     }
@@ -191,17 +190,40 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="flex flex-col">
-      <AdminHeader
-        title="Quản lý danh mục"
-        description={`${totalRows} danh mục`}
-      />
+      <AdminHeader title="Quản lý danh mục" description={`${totalRows} danh mục`} />
 
       <div className="flex-1 space-y-4 p-6">
         {/* Top bar */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm text-gray-500">
-            Trang {page} / {totalPages}
-          </h2>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-sm text-gray-500">
+              Trang {page} / {totalPages}
+            </h2>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="page-size" className="text-sm whitespace-nowrap">
+                Hiển thị:
+              </Label>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(v) => {
+                  setPageSize(parseInt(v) as typeof pageSize);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger id="page-size" className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <SelectItem key={size} value={size.toString()}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-gray-500">mục/trang</span>
+            </div>
+          </div>
           <Button
             className="bg-indigo-600 hover:bg-indigo-700"
             onClick={() => {
@@ -251,29 +273,25 @@ export default function AdminCategoriesPage() {
                 categories.map((cat, idx) => (
                   <TableRow key={cat._id} className="hover:bg-gray-50">
                     <TableCell className="text-gray-400 text-xs">
-                      {(page - 1) * PAGE_SIZE + idx + 1}
+                      {(page - 1) * pageSize + idx + 1}
                     </TableCell>
                     <TableCell className="font-medium">{cat.title}</TableCell>
                     <TableCell className="text-gray-500 text-sm max-w-xs truncate">
-                      {cat.description || "—"}
+                      {cat.description || '—'}
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={
-                          cat.status === "active" ? "default" : "secondary"
-                        }
+                        variant={cat.status === 'active' ? 'default' : 'secondary'}
                         className={
-                          cat.status === "active"
-                            ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
-                            : "bg-gray-100 text-gray-500"
+                          cat.status === 'active'
+                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
+                            : 'bg-gray-100 text-gray-500'
                         }
                       >
-                        {cat.status === "active" ? "Hiển thị" : "Ẩn"}
+                        {cat.status === 'active' ? 'Hiển thị' : 'Ẩn'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-center text-sm">
-                      {cat.position}
-                    </TableCell>
+                    <TableCell className="text-center text-sm">{cat.position}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
                         <Button
@@ -308,11 +326,7 @@ export default function AdminCategoriesPage() {
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className={
-                    page === 1
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
+                  className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                 />
               </PaginationItem>
               <PaginationItem>
@@ -324,9 +338,7 @@ export default function AdminCategoriesPage() {
                 <PaginationNext
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   className={
-                    page === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
+                    page === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
                   }
                 />
               </PaginationItem>
@@ -349,9 +361,7 @@ export default function AdminCategoriesPage() {
               <Input
                 id="create-title"
                 value={createForm.title}
-                onChange={(e) =>
-                  setCreateForm((f) => ({ ...f, title: e.target.value }))
-                }
+                onChange={(e) => setCreateForm((f) => ({ ...f, title: e.target.value }))}
                 placeholder="VD: Áo thun"
               />
             </div>
@@ -360,9 +370,7 @@ export default function AdminCategoriesPage() {
               <Textarea
                 id="create-desc"
                 value={createForm.description}
-                onChange={(e) =>
-                  setCreateForm((f) => ({ ...f, description: e.target.value }))
-                }
+                onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
                 placeholder="Mô tả ngắn về danh mục..."
                 rows={3}
               />
@@ -375,7 +383,7 @@ export default function AdminCategoriesPage() {
                   onValueChange={(v) =>
                     setCreateForm((f) => ({
                       ...f,
-                      status: v as "active" | "inactive",
+                      status: v as 'active' | 'inactive',
                     }))
                   }
                 >
@@ -414,7 +422,7 @@ export default function AdminCategoriesPage() {
               onClick={handleCreate}
               disabled={createLoading}
             >
-              {createLoading ? "Đang tạo..." : "Tạo danh mục"}
+              {createLoading ? 'Đang tạo...' : 'Tạo danh mục'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -434,9 +442,7 @@ export default function AdminCategoriesPage() {
               <Input
                 id="edit-title"
                 value={editForm.title}
-                onChange={(e) =>
-                  setEditForm((f) => ({ ...f, title: e.target.value }))
-                }
+                onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
@@ -444,9 +450,7 @@ export default function AdminCategoriesPage() {
               <Textarea
                 id="edit-desc"
                 value={editForm.description}
-                onChange={(e) =>
-                  setEditForm((f) => ({ ...f, description: e.target.value }))
-                }
+                onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
                 rows={3}
               />
             </div>
@@ -458,7 +462,7 @@ export default function AdminCategoriesPage() {
                   onValueChange={(v) =>
                     setEditForm((f) => ({
                       ...f,
-                      status: v as "active" | "inactive",
+                      status: v as 'active' | 'inactive',
                     }))
                   }
                 >
@@ -497,7 +501,7 @@ export default function AdminCategoriesPage() {
               onClick={handleEdit}
               disabled={editLoading}
             >
-              {editLoading ? "Đang lưu..." : "Lưu thay đổi"}
+              {editLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -509,9 +513,8 @@ export default function AdminCategoriesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Xác nhận xóa danh mục</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc muốn xóa danh mục{" "}
-              <strong>&quot;{deleteTarget?.title}&quot;</strong>? Hành động này
-              không thể hoàn tác.
+              Bạn có chắc muốn xóa danh mục <strong>&quot;{deleteTarget?.title}&quot;</strong>? Hành
+              động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -521,7 +524,7 @@ export default function AdminCategoriesPage() {
               onClick={handleDelete}
               disabled={deleteLoading}
             >
-              {deleteLoading ? "Đang xóa..." : "Xóa"}
+              {deleteLoading ? 'Đang xóa...' : 'Xóa'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

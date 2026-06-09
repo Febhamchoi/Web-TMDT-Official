@@ -73,8 +73,10 @@ export default function CheckoutPage() {
   }, [selectedItems, router, isProcessing, isOrderPlaced]);
 
   const totalPrice = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const tax = totalPrice * 0.1; // 10% tax
+  const shipping = totalPrice > 0 ? 15000 : 0; // 15,000đ shipping fee if cart is not empty
   const discountAmount = Math.min(appliedDiscount?.discountAmount ?? 0, totalPrice);
-  const finalTotalPrice = Math.max(totalPrice - discountAmount, 0);
+  const finalTotalPrice = Math.max(totalPrice + tax + shipping - discountAmount, 0);
 
   const handleApplyDiscount = async () => {
     const code = discountCodeInput.trim().toUpperCase();
@@ -479,6 +481,23 @@ export default function CheckoutPage() {
                     </div>
                   ))}
                   <Separator />
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Tạm tính</span>
+                      <span>{totalPrice.toLocaleString('vi-VN')}₫</span>
+                    </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Thuế (10%)</span>
+                      <span>{tax.toLocaleString('vi-VN')}₫</span>
+                    </div>
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>Phí vận chuyển</span>
+                      <span>
+                        {shipping > 0 ? shipping.toLocaleString('vi-VN') + '₫' : 'Miễn phí'}
+                      </span>
+                    </div>
+                  </div>
+                  <Separator />
                   {appliedDiscount && (
                     <>
                       <div className="flex justify-between text-green-700">
@@ -558,8 +577,12 @@ export default function CheckoutPage() {
                   <span>{totalPrice.toLocaleString('vi-VN')}₫</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
+                  <span>Thuế (10%)</span>
+                  <span>{tax.toLocaleString('vi-VN')}₫</span>
+                </div>
+                <div className="flex justify-between text-muted-foreground">
                   <span>Phí vận chuyển</span>
-                  <span>Miễn phí</span>
+                  <span>{shipping > 0 ? shipping.toLocaleString('vi-VN') + '₫' : 'Miễn phí'}</span>
                 </div>
                 {appliedDiscount && (
                   <div className="flex justify-between text-green-700">

@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuth } from "@/context/AuthContext";
-import { login } from "@/service/auth";
-import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useAuth } from '@/context/AuthContext';
+import { login, loginWithGoogle } from '@/service/auth';
+import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login: authLogin } = useAuth();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
     remember: false,
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -36,9 +36,7 @@ export default function LoginPage() {
         formData.remember,
       );
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "Email hoặc mật khẩu không đúng!",
-      );
+      toast.error(error.response?.data?.message || 'Email hoặc mật khẩu không đúng!');
     } finally {
       setLoading(false);
     }
@@ -62,13 +60,10 @@ export default function LoginPage() {
         <div className="absolute bottom-12 left-10 right-10 text-white">
           <Link href="/" className="inline-block mb-8">
             <h1 className="text-4xl font-light tracking-[0.15em]">TrendVibe</h1>
-            <p className="text-xs text-gray-300 uppercase tracking-[0.3em] mt-1">
-              Fashion & Style
-            </p>
+            <p className="text-xs text-gray-300 uppercase tracking-[0.3em] mt-1">Fashion & Style</p>
           </Link>
           <blockquote className="italic text-xl font-light text-gray-100 leading-relaxed max-w-sm">
-            "Thời trang không phải về những bộ quần áo bạn mặc — mà là câu
-            chuyện bạn kể."
+            "Thời trang không phải về những bộ quần áo bạn mặc — mà là câu chuyện bạn kể."
           </blockquote>
         </div>
       </div>
@@ -84,9 +79,7 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-10">
             <Link href="/">
-              <h1 className="text-3xl font-light tracking-[0.15em]">
-                TrendVibe
-              </h1>
+              <h1 className="text-3xl font-light tracking-[0.15em]">TrendVibe</h1>
               <p className="text-xs text-gray-400 uppercase tracking-[0.3em] mt-1">
                 Fashion & Style
               </p>
@@ -98,19 +91,14 @@ export default function LoginPage() {
             <p className="text-xs uppercase tracking-[0.25em] text-gray-400 mb-2">
               Chào mừng trở lại
             </p>
-            <h2 className="text-3xl font-light tracking-wide text-gray-900">
-              Đăng nhập
-            </h2>
+            <h2 className="text-3xl font-light tracking-wide text-gray-900">Đăng nhập</h2>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="email"
-                className="text-xs uppercase tracking-widest text-gray-500"
-              >
+              <label htmlFor="email" className="text-xs uppercase tracking-widest text-gray-500">
                 Email
               </label>
               <Input
@@ -118,9 +106,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="name@example.com"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="h-12 rounded-none border-gray-200 focus-visible:ring-0 focus-visible:border-gray-900 transition-colors bg-gray-50 focus:bg-white"
                 required
               />
@@ -145,12 +131,10 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Nhập mật khẩu của bạn"
                   value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="h-12 rounded-none border-gray-200 focus-visible:ring-0 focus-visible:border-gray-900 transition-colors bg-gray-50 focus:bg-white pr-12"
                   required
                 />
@@ -160,11 +144,7 @@ export default function LoginPage() {
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition-colors"
                   tabIndex={-1}
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -175,9 +155,7 @@ export default function LoginPage() {
                 id="remember"
                 type="checkbox"
                 checked={formData.remember}
-                onChange={(e) =>
-                  setFormData({ ...formData, remember: e.target.checked })
-                }
+                onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
                 className="w-4 h-4 accent-gray-900 cursor-pointer"
               />
               <label
@@ -200,7 +178,7 @@ export default function LoginPage() {
                   Đang xử lý...
                 </span>
               ) : (
-                "ĐĂNG NHẬP"
+                'ĐĂNG NHẬP'
               )}
             </Button>
           </form>
@@ -208,15 +186,30 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-4 my-7">
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400 uppercase tracking-widest">
-              hoặc
-            </span>
+            <span className="text-xs text-gray-400 uppercase tracking-widest">hoặc</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
+          {/* Google Login */}
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full h-12 rounded-none text-sm tracking-widest font-normal border-gray-300 hover:bg-gray-50 transition-colors mb-4"
+            onClick={loginWithGoogle}
+          >
+            <Image
+              src="https://www.gstatic.com/firebaseapp/v8.2.3/images/firebaseui-icon-16.png"
+              alt="Google"
+              width={16}
+              height={16}
+              className="mr-2"
+            />
+            ĐĂNG NHẬP GOOGLE
+          </Button>
+
           {/* Register link */}
           <p className="text-center text-sm text-gray-500">
-            Chưa có tài khoản?{" "}
+            Chưa có tài khoản?{' '}
             <Link
               href="/register"
               className="text-gray-900 font-medium underline underline-offset-2 hover:no-underline transition-all"
@@ -227,10 +220,7 @@ export default function LoginPage() {
 
           {/* Back to home */}
           <p className="text-center mt-4">
-            <Link
-              href="/"
-              className="text-xs text-gray-400 hover:text-gray-700 transition-colors"
-            >
+            <Link href="/" className="text-xs text-gray-400 hover:text-gray-700 transition-colors">
               ← Quay về trang chủ
             </Link>
           </p>

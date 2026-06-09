@@ -21,12 +21,12 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80';
-
-const PAGE_SIZE = 8;
+const PAGE_SIZE_OPTIONS = [8, 12, 16, 20, 24] as const;
 
 export default function ShopPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedSize, setSelectedSize] = useState<{ [key: string]: string }>({});
+  const [pageSize, setPageSize] = useState(8);
   const [products, setProducts] = useState<Product[]>([]);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ export default function ShopPage() {
   const [addingProductId, setAddingProductId] = useState<string | null>(null);
   const { addItem } = useCart();
 
-  const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
   const getSortParams = (value: string) => {
     switch (value) {
@@ -69,12 +69,11 @@ export default function ShopPage() {
       const sort = getSortParams(sortBy);
       const trimmedKeyword = searchKeyword.trim();
       const result = await getProducts({
-        offset: (page - 1) * PAGE_SIZE,
-        limit: PAGE_SIZE,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
         status: 'active',
         category: selectedCategory === 'all' ? undefined : selectedCategory,
-        keyword: trimmedKeyword || undefined,
-        field: trimmedKeyword ? 'name' : undefined,
+        q: trimmedKeyword || undefined,
         ...sort,
       });
       setProducts((result?.hits as Product[]) ?? []);
@@ -84,7 +83,7 @@ export default function ShopPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, sortBy, selectedCategory, searchKeyword]);
+  }, [page, sortBy, selectedCategory, searchKeyword, pageSize]);
 
   useEffect(() => {
     fetchProducts();
@@ -98,6 +97,14 @@ export default function ShopPage() {
   const handleSortChange = (val: string) => {
     setSortBy(val);
     setPage(1);
+  };
+
+  const handlePageSizeChange = (val: string) => {
+    const num = parseInt(val, 10);
+    if (!isNaN(num) && num > 0) {
+      setPageSize(num);
+      setPage(1);
+    }
   };
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -213,10 +220,23 @@ export default function ShopPage() {
                 </div>
               </div>
 
+              {/* Page Size Selector */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Hiển thị:</span>
+                <Input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={pageSize}
+                  onChange={(e) => handlePageSizeChange(e.target.value)}
+                  className="w-20 bg-white"
+                />
+              </div>
+
               {/* Count */}
               <span className="text-sm text-gray-500">
                 {totalRows > 0
-                  ? `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, totalRows)} / ${totalRows} sản phẩm`
+                  ? `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, totalRows)} / ${totalRows} sản phẩm`
                   : '0 sản phẩm'}
               </span>
             </div>
@@ -312,7 +332,7 @@ export default function ShopPage() {
                     : 'flex flex-col gap-6'
                 }
               >
-                {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                {Array.from({ length: pageSize }).map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="bg-gray-200 h-[340px] mb-4" />
                     <div className="h-4 bg-gray-200 rounded mb-2 w-3/4" />

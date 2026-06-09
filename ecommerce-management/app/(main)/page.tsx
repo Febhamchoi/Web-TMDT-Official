@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Package, Shield, RotateCcw, Headphones } from 'lucide-react';
+import { Package, Shield, RotateCcw, Headphones, Flame } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -291,9 +291,13 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center mb-12"
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-black mb-2 text-center">
-                ✨ Sản phẩm nổi bật
-              </h2>
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <Flame className="h-8 w-8 text-red-500" />
+                <h2 className="text-4xl md:text-5xl font-bold text-black text-center">
+                  Sản phẩm nổi bật
+                </h2>
+                <Flame className="h-8 w-8 text-red-500" />
+              </div>
               <p className="text-gray-600 text-sm md:text-base text-center">
                 Các sản phẩm được yêu thích và ưu đãi tốt nhất
               </p>

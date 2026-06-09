@@ -1,4 +1,4 @@
-import http, { ResList } from "../http";
+import http, { ResList } from '../http';
 
 export interface ProductCategory {
   _id: string;
@@ -25,7 +25,7 @@ export interface Product {
   rating?: number;
   reviewCount?: number;
   isFeatured?: boolean;
-  status?: "active" | "inactive" | "out_of_stock";
+  status?: 'active' | 'inactive' | 'out_of_stock';
   deletedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
@@ -41,15 +41,14 @@ export interface GetProductsParams {
   brand?: string;
   isFeatured?: boolean;
   sortBy?: string;
-  sortType?: "asc" | "desc";
+  sortType?: 'asc' | 'desc';
+  q?: string;
   keyword?: string;
   field?: string;
 }
 
-export const getProducts = async (
-  params?: GetProductsParams,
-): Promise<ResList> => {
-  const response = await http.get("/products", { params });
+export const getProducts = async (params?: GetProductsParams): Promise<ResList> => {
+  const response = await http.get('/products', { params });
   return response.data.data;
 };
 
@@ -60,11 +59,8 @@ export const getProduct = async (id: string): Promise<Product> => {
 
 export const getProductsByCategory = async (
   category: string,
-  params?: Omit<GetProductsParams, "category">,
+  params?: Omit<GetProductsParams, 'category'>,
 ): Promise<ResList> => {
-  const response = await http.get(
-    `/products/category/${encodeURIComponent(category)}`,
-    { params },
-  );
+  const response = await http.get(`/products/category/${encodeURIComponent(category)}`, { params });
   return response.data.data;
 };

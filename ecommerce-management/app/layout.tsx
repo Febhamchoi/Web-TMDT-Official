@@ -1,13 +1,17 @@
 import type React from 'react';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { CartProvider } from '@/context/cart-context';
-import { Toaster } from 'sonner';
 import { AuthProvider } from '@/context/AuthContext';
+import { ToasterProvider } from '@/components/toaster-provider';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  weights: [400, 500, 600, 700],
+});
 
 export const metadata: Metadata = {
   title: 'TrendVibe - Fashion Store',
@@ -21,13 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body suppressHydrationWarning className="font-inter">
+    <html lang="en" suppressHydrationWarning className={montserrat.variable}>
+      <body suppressHydrationWarning className="font-montserrat">
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <CartProvider>
               {children}
-              <Toaster />
+              <ToasterProvider />
             </CartProvider>
           </ThemeProvider>
         </AuthProvider>

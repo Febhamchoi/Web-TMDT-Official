@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, MessageCircle, SendHorizontal, Sparkles, User, X } from 'lucide-react';
+import { Bot, Facebook, MessageCircle, SendHorizontal, Sparkles, User, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
@@ -21,6 +21,8 @@ const QUICK_PROMPTS = [
   'Mình cần áo sơ mi công sở màu trắng',
   'Gợi ý outfit đi chơi cuối tuần',
 ];
+
+const FACEBOOK_PROFILE_URL = 'https://www.facebook.com/h.10010.10';
 
 type MessageRole = 'assistant' | 'user';
 
@@ -322,8 +324,23 @@ export function ChatbotWidget() {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.3 }}
-        className="fixed bottom-5 right-5 z-40"
+        className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3"
       >
+        <a
+          href={FACEBOOK_PROFILE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Mở Facebook"
+        >
+          <Button
+            type="button"
+            size="icon"
+            className="relative h-14 w-14 rounded-full bg-blue-600 text-white shadow-[0_16px_30px_rgba(0,0,0,0.35)] hover:bg-blue-700"
+          >
+            <Facebook className="h-5 w-5" />
+          </Button>
+        </a>
+
         <Button
           type="button"
           size="icon"

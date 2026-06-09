@@ -23,6 +23,7 @@ import { ShoppingCart, Menu, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Logo } from '@/components/logo';
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,6 +49,7 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'Trang chủ', exact: true },
     { href: '/shop', label: 'Cửa hàng', exact: false },
+    { href: '/shop?sort=new', label: 'Sản phẩm mới', exact: false },
     { href: '/about', label: 'Về chúng tôi', exact: false },
   ] as const;
 
@@ -78,7 +80,7 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="left">
                 <SheetHeader>
-                  <SheetTitle className="text-xl font-bold">TrendVibe</SheetTitle>
+                  <Logo size="md" showSubtitle={false} href="/" />
                   <SheetDescription>Khám phá cửa hàng của chúng tôi</SheetDescription>
                 </SheetHeader>
                 <nav className="grid gap-5 py-6">
@@ -86,14 +88,14 @@ export function Header() {
                     <Link
                       key={href}
                       href={href}
-                      className="text-base font-medium text-black/70 hover:text-black transition-colors"
+                      className="text-base font-bold text-black/70 hover:text-black transition-colors"
                     >
                       {label}
                     </Link>
                   ))}
                   <Link
                     href="/contact"
-                    className="text-base font-medium text-black/70 hover:text-black transition-colors"
+                    className="text-base font-bold text-black/70 hover:text-black transition-colors"
                   >
                     Liên hệ
                   </Link>
@@ -102,17 +104,14 @@ export function Header() {
             </Sheet>
 
             {/* Logo - desktop */}
-            <Link href="/" className="hidden md:block group">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-wide group-hover:opacity-75 transition-opacity">
-                TrendVibe
-              </h1>
-              <p className="text-[10px] text-gray-400 uppercase tracking-[0.25em] mt-0.5">THEME</p>
-            </Link>
+            <div className="hidden md:block">
+              <Logo size="md" showSubtitle={false} href="/" />
+            </div>
 
             {/* Logo - mobile (centered via grid) */}
-            <Link href="/" className="md:hidden">
-              <h1 className="text-2xl font-bold tracking-wide">TrendVibe</h1>
-            </Link>
+            <div className="md:hidden">
+              <Logo size="sm" showSubtitle={false} href="/" />
+            </div>
           </div>
 
           {/* Center - Navigation (desktop only) */}
@@ -123,7 +122,7 @@ export function Header() {
                 <Link
                   key={href}
                   href={href}
-                  className={`relative text-base font-medium tracking-wide transition-colors pb-1 group ${
+                  className={`relative text-base font-bold tracking-wide transition-colors pb-1 group ${
                     isActive ? 'text-black' : 'text-black/70 hover:text-black'
                   }`}
                 >

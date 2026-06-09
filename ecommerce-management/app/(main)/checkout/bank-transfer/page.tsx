@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Building2, CheckCircle2, Copy, Home, Package } from "lucide-react";
-import { toast } from "sonner";
-import Link from "next/link";
-import Image from "next/image";
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Building2, CheckCircle2, Copy, Home, Package } from 'lucide-react';
+import { toast } from 'sonner';
+import Link from 'next/link';
+import Image from 'next/image';
 
-const BANK_NAME = "MB Bank";
-const BANK_ACCOUNT = "0151052219999";
-const BANK_ACCOUNT_NAME = "BUI DUC HUNG";
+const BANK_NAME = 'MB Bank';
+const BANK_ACCOUNT = '2701200499999';
+const BANK_ACCOUNT_NAME = 'LUU HOANG PHUC';
 
 function BankTransferContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const orderId = searchParams.get("orderId") ?? "";
-  const amount = Number(searchParams.get("amount") ?? 0);
+  const orderId = searchParams.get('orderId') ?? '';
+  const amount = Number(searchParams.get('amount') ?? 0);
   const transferContent = `ORDER ${orderId.toUpperCase()}`;
   const qrCodeUrl = `https://img.vietqr.io/image/MB-${BANK_ACCOUNT}-compact2.png?amount=${encodeURIComponent(amount.toString())}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(BANK_ACCOUNT_NAME)}`;
 
   useEffect(() => {
     if (!orderId) {
-      router.replace("/");
+      router.replace('/');
     }
   }, [orderId, router]);
 
@@ -68,14 +68,12 @@ function BankTransferContent() {
           <div className="flex items-center justify-between py-2">
             <span className="text-muted-foreground">Số tài khoản</span>
             <div className="flex items-center gap-2">
-              <span className="font-mono font-semibold text-lg">
-                {BANK_ACCOUNT}
-              </span>
+              <span className="font-mono font-semibold text-lg">{BANK_ACCOUNT}</span>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={() => copyText(BANK_ACCOUNT, "số tài khoản")}
+                onClick={() => copyText(BANK_ACCOUNT, 'số tài khoản')}
               >
                 <Copy className="h-3.5 w-3.5" />
               </Button>
@@ -92,7 +90,7 @@ function BankTransferContent() {
           <div className="flex items-center justify-between py-2">
             <span className="text-muted-foreground">Số tiền</span>
             <span className="font-bold text-xl text-primary">
-              {amount.toLocaleString("vi-VN")}₫
+              {amount.toLocaleString('vi-VN')}₫
             </span>
           </div>
           <Separator />
@@ -105,9 +103,7 @@ function BankTransferContent() {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7"
-                onClick={() =>
-                  copyText(transferContent, "nội dung chuyển khoản")
-                }
+                onClick={() => copyText(transferContent, 'nội dung chuyển khoản')}
               >
                 <Copy className="h-3.5 w-3.5" />
               </Button>
@@ -141,10 +137,9 @@ function BankTransferContent() {
       <Card className="mb-8 border-amber-200 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-800">
         <CardContent className="pt-4">
           <p className="text-sm text-amber-800 dark:text-amber-200">
-            <strong>Lưu ý:</strong> Vui lòng nhập đúng nội dung chuyển khoản{" "}
-            <strong>{transferContent}</strong> để chúng tôi xác nhận đơn hàng
-            nhanh nhất. Đơn hàng sẽ được xử lý trong vòng{" "}
-            <strong>24 giờ</strong> sau khi nhận được thanh toán.
+            <strong>Lưu ý:</strong> Vui lòng nhập đúng nội dung chuyển khoản{' '}
+            <strong>{transferContent}</strong> để chúng tôi xác nhận đơn hàng nhanh nhất. Đơn hàng
+            sẽ được xử lý trong vòng <strong>24 giờ</strong> sau khi nhận được thanh toán.
           </p>
         </CardContent>
       </Card>

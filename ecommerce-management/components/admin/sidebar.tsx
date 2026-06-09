@@ -10,7 +10,6 @@ import {
   Package,
   ChevronLeft,
   ChevronRight,
-  ShoppingCart,
   Users,
   Mail,
   Star,
@@ -52,11 +51,6 @@ const navItems: NavItem[] = [
     label: 'Đánh giá',
     href: '/admin/reviews',
     icon: <Star className="h-5 w-5" />,
-  },
-  {
-    label: 'Giỏ hàng',
-    href: '/admin/carts',
-    icon: <ShoppingCart className="h-5 w-5" />,
   },
   {
     label: 'Tài khoản',
